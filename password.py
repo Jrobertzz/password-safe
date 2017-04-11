@@ -7,7 +7,7 @@ class gui(Tk):
         self.master = master
         master.title("PassSafe")
         master.configure(width=800, height=500,background = 'gray24')
-        self.labels = []
+        self.widgets = []
         self.UserList = ["USER1", "USER2", "USER3"]
         self.initialize()
 
@@ -16,7 +16,7 @@ class gui(Tk):
         counter = 0
         while counter < len(self.UserList):
         	user = Label(text = self.UserList[counter])
-        	self.labels.append(user)
+        	self.widgets.append(user)
         	user.configure(bg='gray24')
         	user.bind("<Button-1>", self.OnClick)
 
@@ -31,13 +31,20 @@ class gui(Tk):
     	self.login(caller["text"])
 
     def login(self,username):
-    	print(username)
+    	self.clear()
     	i = 0
-    	for label in self.labels:
-    		label.destroy()
     	user = Label(text = username)
+        self.widgets.append(user)
     	user.configure(bg='gray24')
-    	user.place(width = 50, height = 10,relx=.5, rely=0.4, anchor=CENTER)
+    	user.place(width = 50, height = 10,relx=.5, rely=0.48, anchor=CENTER)
+
+    	password = Entry();
+        self.widgets.append(password)
+    	password.place(width = 100, height = 20,relx=.5, rely=0.52, anchor=CENTER)
+
+    def clear(self):
+    	for widget in self.widgets:
+    		widget.destroy()
 
 
 
