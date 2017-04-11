@@ -13,11 +13,16 @@ class gui(Tk):
 		self.background.pack(fill=BOTH, expand=YES)
 
 		self.widgets = []
-		self.UserList = ["USER1", "USER2", "USER3"]
+
+		self.file = open("users.txt", 'r+')
+		self.UserList = self.file.read().split(' ')
+
 		self.initialize()
 
 	def initialize(self):
 
+		self.file.seek(0)
+		self.UserList = self.file.read().split(' ')
 		self.background.delete("all")
 		
 		counter = 0
@@ -27,14 +32,55 @@ class gui(Tk):
 			user.configure(bg='gray24')
 			user.bind("<Button-1>", self.UserOnClick)
 
-			x_pos = (counter+1)/10 - (len(self.UserList)+1)/20 + .5
+			x_pos = (counter+1)/10 - (len(self.UserList)+2)/20 + .5
 
 			user.place(width = 50, height = 10,relx=x_pos, rely=0.5, anchor=CENTER)
 			counter += 1
 
+		new_user = Label(text = "NEW USER")
+		self.widgets.append(new_user)
+		new_user.bind("<Button-1>", self.NewUserOnClick)
+		new_user.configure(bg='gray24')
+		new_user.place(width = 80, height = 10,relx=.5, rely=0.55, anchor=CENTER)
+
 	def UserOnClick(self, event):
 		caller = event.widget
 		self.login(caller["text"])
+
+	def NewUserOnClick(self, event):
+		self.clear()
+		self.background.create_polygon((0,0,0,50,50,0), fill='black')
+
+		new_user = Label(text = "NEW USER")
+		self.widgets.append(new_user)
+		new_user.bind("<Button-1>", self.NewUserOnClick)
+		new_user.configure(bg='gray24')
+		new_user.place(width = 80, height = 10,relx=.5, rely=0.45, anchor=CENTER)
+
+		self.new_username = Entry()
+		self.widgets.append(self.new_username)
+		self.new_username.place(width = 100, height = 20,relx=.5, rely=0.52, anchor=CENTER)
+		self.new_username.bind('<Return>', self.NewUser)
+
+	def NewUser(self, event):
+		user = Label(text = self.new_username.get())
+		user.configure(background = 'gray24')
+		self.widgets.append(user)
+		user.place(width = 80, height = 10,relx=.5, rely=0.45, anchor=CENTER)
+
+		self.new_password = Entry()
+		self.widgets.append(self.new_password)
+		self.new_password.place(width = 100, height = 20,relx=.5, rely=0.52, anchor=CENTER)
+		self.new_password.bind('<Return>', self.NewPassword)
+
+	def NewPassword(self, event):
+		#ENCRYPT AND STORE PASSWORD
+		print(self.new_password.get())
+		self.file.write(" " + self.new_username.get())
+		self.clear()
+		self.initialize()
+
+
 
 	def BackOnClick(self, event):
 
