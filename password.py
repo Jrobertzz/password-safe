@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from tkinter import *
+from tkinter.scrolledtext import ScrolledText
 
 class gui(Tk):
 	def __init__(self, master):
@@ -95,6 +96,8 @@ class gui(Tk):
 	def login(self,username):
 		self.clear()
 
+		self.username = username	#this is ugly I know, will (hopefully) clean up later
+
 		self.background.create_polygon((0,0,0,50,50,0), fill='black')
 
 		i = 0
@@ -116,6 +119,35 @@ class gui(Tk):
 	def OnEnter(self, event):
 		__password = self.password.get()
 		self.password.delete(0, END)
+		self.clear()
+		self.passwords()
+
+	def passwords(self):
+		user = Label(text = self.username)
+		self.widgets.append(user)
+		user.configure(background = 'gray24')
+		user.place(width = 100, height = 20,relx=.5, rely=0.05, anchor=CENTER)
+
+		groups = ['Social Media', 'Entertainment', 'Education', 'Gaming', 'Other']
+
+		counter = 0
+		while counter < len(groups):
+			passwords = ScrolledText()
+			self.widgets.append(passwords)
+			#to disable/enable editing use state='normal' and state='disabled' respectively
+			passwords.configure(background = 'gray24', highlightthickness=0,borderwidth=0)
+			
+			#removes scrollbar
+			passwords.vbar.forget()
+
+			passwords.tag_config('justified', justify=CENTER)
+			passwords.insert(INSERT, groups[counter], 'justified')
+			x_offset = (counter+1)/(len(groups)+1)
+			passwords.place(width = 120, height = 400,relx=x_offset, rely=0.5, anchor=CENTER)
+
+
+			counter += 1
+
 
 if __name__ == "__main__":
 	root = Tk()
