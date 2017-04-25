@@ -108,8 +108,9 @@ class gui(Tk):
 		self.widgets.append(user)	#add label widget to widget lists
 		user.place(width = 80, height = 10,relx=.5, rely=0.45, anchor=CENTER)
 
+		#Entry is a textbox with event listeners
 		self.new_password = Entry()
-		self.widgets.append(self.new_password)
+		self.widgets.append(self.new_password)	#add to widgets list
 		self.new_password.place(width = 100, height = 20,relx=.5, rely=0.52, anchor=CENTER)
 		self.new_password.bind('<Return>', self.NewPassword)
 
