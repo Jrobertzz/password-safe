@@ -21,7 +21,7 @@ class gui(Tk):
 		self.initialize()
 
 	def initialize(self):
-
+		self.clear()
 		self.file.seek(0)
 		self.UserList = self.file.read().split(' ')
 		self.background.delete("all")
@@ -33,7 +33,7 @@ class gui(Tk):
 			user.configure(bg='gray24')
 			user.bind("<Button-1>", self.UserOnClick)
 
-			x_pos = (counter+1)/10 - (len(self.UserList)+2)/20 + .5
+			x_pos = (counter+1)/10 - (len(self.UserList)+1)/20 + .5
 
 			user.place(width = 50, height = 10,relx=x_pos, rely=0.5, anchor=CENTER)
 			counter += 1
@@ -134,6 +134,7 @@ class gui(Tk):
 		while counter < len(groups):
 			passwords = ScrolledText()
 			self.widgets.append(passwords)
+			self.widgets.append(passwords.frame)
 			#to disable/enable editing use state='normal' and state='disabled' respectively
 			passwords.configure(background = 'gray24', highlightthickness=0,borderwidth=0)
 			
@@ -144,7 +145,6 @@ class gui(Tk):
 			passwords.insert(INSERT, groups[counter], 'justified')
 			x_offset = (counter+1)/(len(groups)+1)
 			passwords.place(width = 120, height = 400,relx=x_offset, rely=0.5, anchor=CENTER)
-
 
 			counter += 1
 
