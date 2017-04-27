@@ -1,16 +1,19 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 from tkinter import *
 from tkinter.scrolledtext import ScrolledText
+from PassSys import PassSys
 
 class gui(Tk):
 	def __init__(self, master):
 
+		self.ps = PassSys('u.txt')
+
 		#color config
-		self.gui_background = 'gray24'						#background color
-		self.gui_foreground = 'black'						#foreground in the context
-															#of this program refers to text color
-															#foreground is naming convention
+		self.gui_background = 'gray24'			#background color
+		self.gui_foreground = 'white'			#foreground in the context
+												#of this program refers to text color
+												#foreground is naming convention
 
 		#allows referencing parent object of whole gui from within class
 		#Tk parent object is basically the window
@@ -29,19 +32,13 @@ class gui(Tk):
 		#I did not add background to widgets list as canvas will always be present
 		self.widgets = []
 
-		self.file = open("users.txt", 'r+')
-		self.UserList = self.file.read().split(' ')
-
 		self.initialize()
 
 	def initialize(self):
 		#destroy all non-permanent objects(see def clear)
 		self.clear()
 
-		#set head to start of file and split by space
-		#(to be changed, split by space for quick prototyping)
-		self.file.seek(0)
-		self.UserList = self.file.read().split(' ')
+		self.UserList = self.ps.getUsers()
 
 		#reset background canvas to clear anything drawn to it
 		#(in case of back clicked, clears back button)
@@ -61,7 +58,7 @@ class gui(Tk):
 																						#
 			x_pos = (counter+1)/10 - (len(self.UserList)+1)/20 + .5						#
 																						#
-			user.place(width = 50, height = 10,relx=x_pos, rely=0.5, anchor=CENTER)		#
+			user.place(width = 50, height = 50,relx=x_pos, rely=0.5, anchor=CENTER)		#
 			counter += 1																#
 		#################################################################################
 
@@ -71,7 +68,7 @@ class gui(Tk):
 		self.widgets.append(new_user)
 		new_user.bind("<Button-1>", self.NewUserOnClick)
 		new_user.configure(bg=self.gui_background, fg=self.gui_foreground)
-		new_user.place(width = 80, height = 10,relx=.5, rely=0.55, anchor=CENTER)
+		new_user.place(width = 80, height = 15,relx=.5, rely=0.55, anchor=CENTER)
 
 	def UserOnClick(self, event):
 		#ugly way to get widget value, I used a better solution elsewhere
@@ -92,7 +89,7 @@ class gui(Tk):
 		self.widgets.append(new_user)	#add label widget to widget lists
 		new_user.bind("<Button-1>", self.NewUserOnClick)	#bind mouseclick listener, call NewUserOnClick on click
 		new_user.configure(bg=self.gui_background, fg=self.gui_foreground)
-		new_user.place(width = 80, height = 10,relx=.5, rely=0.45, anchor=CENTER)
+		new_user.place(width = 80, height = 15,relx=.5, rely=0.45, anchor=CENTER)
 
 		#Entry is a text box that accepts input
 		self.new_username = Entry()
@@ -104,9 +101,10 @@ class gui(Tk):
 		#Label is Tkinter onject that displays text
 		#and has some config settings such as text and background color
 		user = Label(text = self.new_username.get())	#set text to new_username Entry text
+		print(user.cget("text"))
 		user.configure(background = self.gui_background, fg=self.gui_foreground)
 		self.widgets.append(user)	#add label widget to widget lists
-		user.place(width = 80, height = 10,relx=.5, rely=0.45, anchor=CENTER)
+		user.place(width = 80, height = 15,relx=.5, rely=0.45, anchor=CENTER)
 
 		#Entry is a textbox with event listeners
 		self.new_password = Entry()
@@ -116,7 +114,7 @@ class gui(Tk):
 
 	def NewPassword(self, event):
 		#ENCRYPT AND STORE PASSWORD
-		self.file.write(" " + self.new_username.get()) #store new_username Entry text
+		self.ps.addUser(self.new_username.get(), self.new_password.cget("text"))
 		self.clear()
 		self.initialize()
 
@@ -151,7 +149,7 @@ class gui(Tk):
 		user = Label(text = username)
 		self.widgets.append(user)		#add to widgets list
 		user.configure(bg=self.gui_background, fg=self.gui_foreground)		#set background/foregroung
-		user.place(width = 50, height = 10,relx=.5, rely=0.48, anchor=CENTER)
+		user.place(width = 50, height = 15,relx=.5, rely=0.48, anchor=CENTER)
 
 		#Entry is a textbox with event listeners
 		self.password = Entry();
@@ -176,8 +174,10 @@ class gui(Tk):
 		#variables from a different method with enough work in java
 		__password = self.password.get()
 		self.password.delete(0, END)	#clear Entry object password's textbox(possibly not neccessary)
-		self.clear()					#remove all non-permanent widgets
-		self.passwords()
+		passwords = self.ps.getNames(self.username, __password)
+		self.show_passwords(passwords)
+		#self.clear()					#remove all non-permanent widgets
+		#self.passwords()
 
 	def passwords(self):
 		#Label is Tkinter onject that displays text
@@ -222,6 +222,8 @@ class gui(Tk):
 																									#
 			counter += 1																			#
 		#############################################################################################
+	def show_passwords(self, passwords):
+		print(passwords)
 
 #when run from command line, the default arguments(none)
 #call __main__
