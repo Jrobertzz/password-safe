@@ -103,6 +103,11 @@ class gui(Tk):
 		new_user.configure(bg=self.gui_background, fg=self.gui_foreground)
 		new_user.place(width = 80, height = 15,relx=.5, rely=0.45, anchor=CENTER)
 
+		self.username = Label(text = "enter username:")	#set text to new_username Entry text
+		self.widgets.append(self.username)	#add label widget to widget lists
+		self.username.configure(background = self.gui_background, fg=self.gui_foreground)
+		self.username.place(width = 100, height = 15,relx=.35, rely=0.52, anchor=CENTER)
+
 		#Entry is a text box that accepts input
 		self.new_username = Entry()
 		self.widgets.append(self.new_username)	#add label widget to widget lists
@@ -110,10 +115,16 @@ class gui(Tk):
 		self.new_username.bind('<Return>', self.NewUser) #bind to enter, call NewUser
 
 	def NewUser(self, event):
+		self.username.destroy()
+
+		password = Label(text = "enter password:")	#set text to new_username Entry text
+		self.widgets.append(password)	#add label widget to widget lists
+		password.configure(background = self.gui_background, fg=self.gui_foreground)
+		password.place(width = 100, height = 15,relx=.35, rely=0.52, anchor=CENTER)
+
 		#Label is Tkinter onject that displays text
 		#and has some config settings such as text and background color
 		user = Label(text = self.new_username.get())	#set text to new_username Entry text
-		print(user.cget("text"))
 		user.configure(background = self.gui_background, fg=self.gui_foreground)
 		self.widgets.append(user)	#add label widget to widget lists
 		user.place(width = 80, height = 15,relx=.5, rely=0.45, anchor=CENTER)
@@ -165,7 +176,7 @@ class gui(Tk):
 		user.place(width = 50, height = 15,relx=.5, rely=0.48, anchor=CENTER)
 
 		#Entry is a textbox with event listeners
-		self.password = Entry();
+		self.password = Entry(show="*");
 		self.widgets.append(self.password)		#add to widgets list
 		self.password.place(width = 100, height = 20,relx=.5, rely=0.52, anchor=CENTER)
 		self.password.bind('<Return>', self.OnEnter)
