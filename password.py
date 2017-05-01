@@ -28,6 +28,11 @@ class gui(Tk):
 		self.background.configure(highlightthickness=0,background=self.gui_background,width=800,height=500)
 		self.background.pack(fill=BOTH, expand=YES)	#fill window at initialization, resize with window resize
 
+
+		self.errors = []
+
+		self.back = Label(text = "back")
+		self.back.configure(background = 'black', fg=self.gui_foreground)
 		#define array to store all widgets(window elements)
 		#I did not add background to widgets list as canvas will always be present
 		self.widgets = []
@@ -37,6 +42,10 @@ class gui(Tk):
 	def initialize(self):
 		#destroy all non-permanent objects(see def clear)
 		self.clear()
+		self.back.destroy()
+
+		self.back = Label(text = "↶")
+		self.back.configure(background = 'black', fg=self.gui_foreground)
 
 		self.UserList = self.ps.getUsers()
 
@@ -80,8 +89,11 @@ class gui(Tk):
 	def NewUserOnClick(self, event):
 		self.clear()
 
+		self.errors = []
+
 		#create_polygon draws to canvas, takes (x1, y1, x2, y2, x3, y3...)
 		self.background.create_polygon((0,0,0,50,50,0), fill='black')
+		self.back.place(width = 10, height = 10,x = 10, y = 10, anchor='nw')
 
 		#Label is Tkinter onject that displays text
 		#and has some config settings such as text and background color
@@ -143,6 +155,7 @@ class gui(Tk):
 
 		#create_polygon draws to canvas, takes (x1, y1, x2, y2, x3, y3...)
 		self.background.create_polygon((0,0,0,50,50,0), fill='black')
+		self.back.place(width = 10, height = 10,x = 10, y = 10, anchor='nw')
 
 		#Label is Tkinter onject that displays text
 		#and has some config settings such as text and background color
@@ -172,58 +185,147 @@ class gui(Tk):
 		#python forgoes the false sense of security other
 		#languages like java give with this, as one can alter
 		#variables from a different method with enough work in java
-		__password = self.password.get()
+		self.__password = self.password.get()
 		self.password.delete(0, END)	#clear Entry object password's textbox(possibly not neccessary)
-		passwords = self.ps.getNames(self.username, __password)
-		self.show_passwords(passwords)
+
+		self.show_passwords()
 		#self.clear()					#remove all non-permanent widgets
 		#self.passwords()
 
-	def passwords(self):
-		#Label is Tkinter onject that displays text
-		#and has some config settings such as text and background color
-		user = Label(text = self.username)
-		self.widgets.append(user)		#add to widgets list
-		user.configure(background = self.gui_background, fg=self.gui_foreground)
-		user.place(width = 100, height = 20,relx=.5, rely=0.05, anchor=CENTER)
+	def show_passwords(self):
+		self.passwords = []
+		self.names = self.ps.getNames(self.username, self.__password)
+		for name in self.names:
+			self.passwords.append(self.ps.getPassword(self.username, self.__password, name))
+		passwords = self.passwords
+		self.clear();
+		self.y_offset = .15
+		i = 0
+		while i < len(self.names):
+			rown = Label(text = self.names[i], anchor="w")														
+			self.widgets.append(rown)
+			rown.configure(background = self.gui_background, fg=self.gui_foreground)
+			rown.place(width = 200, height = 15, relx = .1, rely = self.y_offset, anchor = 'nw')
+			rown.bind('<Button-1>', self.editPassword)
 
-		#temporary, TODO: replace with customizable list
-		groups = ['Social Media', 'Entertainment', 'Education', 'Gaming', 'Other']
+			rowp = Label(text = passwords[i], anchor="w")														
+			self.widgets.append(rowp)
+			rowp.configure(background = self.gui_background, fg=self.gui_foreground)
+			rowp.place(width = 200, height = 15, relx = .3, rely = self.y_offset, anchor = 'nw')
 
-		#############################################################################################
-		#make a set of label objects for all password groups										#
-		#Label is Tkinter onject that displays text 												#
-		#and has some config settings such as text and background color 							#
-																									#
-		counter = 0																					#
-		while counter < len(groups):																#
-			#ScrolledText is a Tkinter object that is affectively									#
-			#a textbox widget paired with scrollbar													#
-			#packed in its own frame																#
-			#a frame is basically a parent object that												#
-			#can contain other Tkinter objects														#
-			passwords = ScrolledText()		 														#
-			self.widgets.append(passwords)															#
-			self.widgets.append(passwords.frame)													#
-			#to disable/enable editing use state='normal' and state='disabled' respectively			#
-			passwords.configure(background = self.gui_background,									#
-								fg=self.gui_foreground,												#
-								highlightthickness=0,												#
-								borderwidth=0)														#
-			#removes scrollbar																		#
-			passwords.vbar.forget()																	#
-																									#
-			#ScrollText handles test like a text editor does with 'justified'						#
-			#text formatting is defined with 'tag_config'											#
-			passwords.tag_config('justified', justify=CENTER)										#
-			passwords.insert(INSERT, groups[counter], 'justified')									#
-			x_offset = (counter+1)/(len(groups)+1)													#
-			passwords.place(width = 120, height = 400,relx=x_offset, rely=0.5, anchor=CENTER)		#
-																									#
-			counter += 1																			#
-		#############################################################################################
-	def show_passwords(self, passwords):
-		print(passwords)
+			#edit = Label(text = "edit", anchor="w")														
+			#self.widgets.append(edit)
+			#edit.configure(background = self.gui_background, fg=self.gui_foreground)
+			#edit.place(width = 200, height = 15, relx = .5, rely = self.y_offset, anchor = 'nw')
+			#edit.bind('<Button-1>', self.editPassword)
+
+			#self.edit_password = Entry()
+			#self.widgets.append(self.edit_password)	#add to widgets list
+			#self.edit_password.place(width = 100, height = 15,relx=.7, rely=self.y_offset, anchor=CENTER)
+			#self.edit_password.bind('<Return>', self.editPassword)
+
+			i += 1
+			self.y_offset += .03
+
+		#edit = Label(text = "edit")
+		#self.widgets.append(edit)
+		#edit.configure(background = self.gui_background, fg=self.gui_foreground)
+		#edit.place(width = 60, height = 15, relx = 0.5, rely = 0.9, anchor=CENTER)
+
+		#edit_username = Label(text = "username")
+		#self.widgets.append(edit_username)
+		#edit_username.configure(background = self.gui_background, fg=self.gui_foreground)
+		#edit_username.place(width = 60, height = 15, relx = 0.2, rely = 0.95, anchor=CENTER)
+
+		#edit_password = Label(text = "password")
+		#self.widgets.append(edit_password)
+		#edit_password.configure(background = self.gui_background, fg=self.gui_foreground)
+		#edit_password.place(width = 60, height = 15, relx = 0.5, rely = 0.95, anchor=CENTER)
+
+		#self.edit_username = Entry()
+		#self.widgets.append(self.edit_username)	#add to widgets list
+		#self.edit_username.place(width = 100, height = 15,relx=.35, rely=.95, anchor=CENTER)
+
+		#self.edit_password = Entry()
+		#self.widgets.append(self.edit_password)	#add to widgets list
+		#self.edit_password.place(width = 100, height = 15,relx=.65, rely=.95, anchor=CENTER)
+		#self.edit_password.bind('<Return>', self.editPassword)
+
+		#self.ps.editPassword(self.username, self.password, )
+
+
+		name_label = Label(text = "name")
+		self.widgets.append(name_label)
+		name_label.configure(background = self.gui_background, fg=self.gui_foreground)
+		name_label.place(width = 60, height = 15, relx = 0.25, rely = 0.1, anchor=CENTER)
+
+		pass_label = Label(text = "password")
+		self.widgets.append(pass_label)
+		pass_label.configure(background = self.gui_background, fg=self.gui_foreground)
+		pass_label.place(width = 60, height = 15, relx = 0.55, rely = 0.1, anchor=CENTER)
+
+		self.new_name = Entry()
+		self.widgets.append(self.new_name)	#add label widget to widget lists
+		self.new_name.place(width = 100, height = 15,relx=.35, rely=0.1, anchor=CENTER)
+
+		self.new_password = Entry()
+		self.widgets.append(self.new_password)	#add label widget to widget lists
+		self.new_password.place(width = 100, height = 15,relx=.65, rely=0.1, anchor=CENTER)
+		self.new_password.bind('<Return>', self.setPassword)
+
+	def setPassword(self, event):
+		name = (self.new_name.get()[:15]) if len(self.new_name.get()) > 15 else self.new_name.get()
+		self.ps.addPassword(self.username, 
+			self.__password, 
+			name, 
+			self.new_password.get())
+
+		self.show_passwords()
+
+		self.y_offset += .03
+
+	def editPassword(self, event):
+
+		caller = event.widget
+		self.name = (caller["text"])
+
+
+		#edit_password = Label(text = "password")
+		#self.widgets.append(edit_password)
+		#edit_password.configure(background = self.gui_background, fg=self.gui_foreground)
+		#edit_password.place(width = 60, height = 15, relx = 0.5, rely = 0.95, anchor=CENTER)
+		#edit_password.bind('<Return>', self.editPasswords)
+
+		self.edit_password = Entry()
+		self.widgets.append(self.edit_password)	#add to widgets list
+		self.edit_password.place(width = 100, height = 15,relx=.5, rely=.95, anchor=CENTER)
+		self.edit_password.bind('<Return>', self.editPasswords)
+
+		self.editLabel = Label(text = "EDIT:", anchor=CENTER)					
+		self.editLabel.configure(background = self.gui_background, fg=self.gui_foreground)
+		self.editLabel.place(width = 50, height = 15, relx = .4, rely = .95, anchor = CENTER)
+
+		self.deleteLabel = Label(text = "DELETE", anchor=CENTER)					
+		self.deleteLabel.configure(background = self.gui_background, fg=self.gui_foreground)
+		self.deleteLabel.place(width = 50, height = 15, relx = .6, rely = .95, anchor = CENTER)
+		self.deleteLabel.bind('<Button-1>', self.delPassword)
+	def editPasswords(self,event):
+		self.ps.editPassword(self.username, self.__password, self.name, self.edit_password.get())
+
+		self.editLabel.destroy()
+		self.deleteLabel.destroy()
+		self.edit_password.destroy()
+		self.show_passwords()
+
+	def delPassword(self,event):
+		self.editLabel.destroy()
+		self.deleteLabel.destroy()
+		self.edit_password.destroy()
+		self.ps.deletePassword(self.username, self.__password, self.name)
+		self.show_passwords()
+
+
+
 
 #when run from command line, the default arguments(none)
 #call __main__

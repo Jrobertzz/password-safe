@@ -200,3 +200,7 @@ class PassSys:
 				found += 1
 		d.truncate()
 		d.close()
+
+	def editPassword(self, username, mPassword, name, new_password):
+		self.deletePassword(username, mPassword, name)
+		self.addPassword(username, mPassword, name, new_password)
