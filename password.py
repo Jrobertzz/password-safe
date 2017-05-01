@@ -130,7 +130,7 @@ class gui(Tk):
 		user.place(width = 80, height = 15,relx=.5, rely=0.45, anchor=CENTER)
 
 		#Entry is a textbox with event listeners
-		self.new_password = Entry()
+		self.new_password = Entry(show="*")
 		self.widgets.append(self.new_password)	#add to widgets list
 		self.new_password.place(width = 100, height = 20,relx=.5, rely=0.52, anchor=CENTER)
 		self.new_password.bind('<Return>', self.NewPassword)
@@ -248,10 +248,10 @@ class gui(Tk):
 
 	def setPassword(self, event):
 		name = (self.new_name.get()[:15]) if len(self.new_name.get()) > 15 else self.new_name.get()
-
+		name = name.strip()
 		for e in self.errors:
 			e.destroy()
-		if(name in self.names):
+		if(name in self.names or (len(name) < 1)):
 			error = Label(text = "invalid username", anchor=CENTER)														
 			self.errors.append(error)
 			error.configure(background = self.gui_background, fg=self.gui_foreground)
