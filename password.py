@@ -213,46 +213,8 @@ class gui(Tk):
 			rowp.configure(background = self.gui_background, fg=self.gui_foreground)
 			rowp.place(width = 200, height = 15, relx = .3, rely = self.y_offset, anchor = 'nw')
 
-			#edit = Label(text = "edit", anchor="w")														
-			#self.widgets.append(edit)
-			#edit.configure(background = self.gui_background, fg=self.gui_foreground)
-			#edit.place(width = 200, height = 15, relx = .5, rely = self.y_offset, anchor = 'nw')
-			#edit.bind('<Button-1>', self.editPassword)
-
-			#self.edit_password = Entry()
-			#self.widgets.append(self.edit_password)	#add to widgets list
-			#self.edit_password.place(width = 100, height = 15,relx=.7, rely=self.y_offset, anchor=CENTER)
-			#self.edit_password.bind('<Return>', self.editPassword)
-
 			i += 1
 			self.y_offset += .03
-
-		#edit = Label(text = "edit")
-		#self.widgets.append(edit)
-		#edit.configure(background = self.gui_background, fg=self.gui_foreground)
-		#edit.place(width = 60, height = 15, relx = 0.5, rely = 0.9, anchor=CENTER)
-
-		#edit_username = Label(text = "username")
-		#self.widgets.append(edit_username)
-		#edit_username.configure(background = self.gui_background, fg=self.gui_foreground)
-		#edit_username.place(width = 60, height = 15, relx = 0.2, rely = 0.95, anchor=CENTER)
-
-		#edit_password = Label(text = "password")
-		#self.widgets.append(edit_password)
-		#edit_password.configure(background = self.gui_background, fg=self.gui_foreground)
-		#edit_password.place(width = 60, height = 15, relx = 0.5, rely = 0.95, anchor=CENTER)
-
-		#self.edit_username = Entry()
-		#self.widgets.append(self.edit_username)	#add to widgets list
-		#self.edit_username.place(width = 100, height = 15,relx=.35, rely=.95, anchor=CENTER)
-
-		#self.edit_password = Entry()
-		#self.widgets.append(self.edit_password)	#add to widgets list
-		#self.edit_password.place(width = 100, height = 15,relx=.65, rely=.95, anchor=CENTER)
-		#self.edit_password.bind('<Return>', self.editPassword)
-
-		#self.ps.editPassword(self.username, self.password, )
-
 
 		name_label = Label(text = "name")
 		self.widgets.append(name_label)
@@ -275,26 +237,28 @@ class gui(Tk):
 
 	def setPassword(self, event):
 		name = (self.new_name.get()[:15]) if len(self.new_name.get()) > 15 else self.new_name.get()
-		self.ps.addPassword(self.username, 
-			self.__password, 
-			name, 
-			self.new_password.get())
 
-		self.show_passwords()
+		for e in self.errors:
+			e.destroy()
+		if(name in self.names):
+			error = Label(text = "invalid username", anchor=CENTER)														
+			self.errors.append(error)
+			error.configure(background = self.gui_background, fg=self.gui_foreground)
+			error.place(width = 200, height = 15, relx = .5, rely = .05, anchor = CENTER)
+		else:
+			self.ps.addPassword(self.username, 
+				self.__password, 
+				name, 
+				self.new_password.get())
+			self.y_offset += .03
 
-		self.y_offset += .03
+			self.show_passwords()
+
 
 	def editPassword(self, event):
 
 		caller = event.widget
 		self.name = (caller["text"])
-
-
-		#edit_password = Label(text = "password")
-		#self.widgets.append(edit_password)
-		#edit_password.configure(background = self.gui_background, fg=self.gui_foreground)
-		#edit_password.place(width = 60, height = 15, relx = 0.5, rely = 0.95, anchor=CENTER)
-		#edit_password.bind('<Return>', self.editPasswords)
 
 		self.edit_password = Entry()
 		self.widgets.append(self.edit_password)	#add to widgets list
