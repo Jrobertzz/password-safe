@@ -73,7 +73,6 @@ class PassSys:
 		sfile = (username + '_s.dat')
 
 		namesList = []
-		
 		s = open(sfile,'rb')
 		salt = s.read(16)
 		s.close()

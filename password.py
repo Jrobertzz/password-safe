@@ -137,9 +137,9 @@ class gui(Tk):
 
 	def NewPassword(self, event):
 		#ENCRYPT AND STORE PASSWORD
-		self.ps.addUser(self.new_username.get(), self.new_password.cget("text"))
-		self.clear()
-		self.initialize()
+			self.ps.addUser(self.new_username.get(), self.new_password.cget("text"))
+			self.clear()
+			self.initialize()
 
 
 
@@ -204,6 +204,8 @@ class gui(Tk):
 		#self.passwords()
 
 	def show_passwords(self):
+
+
 		self.passwords = []
 		self.names = self.ps.getNames(self.username, self.__password)
 		for name in self.names:
@@ -211,6 +213,12 @@ class gui(Tk):
 		passwords = self.passwords
 		self.clear();
 		self.y_offset = .15
+
+		delete_user = Label(text = "DELETE USER AND ALL PASSWORDS???")
+		self.widgets.append(delete_user)
+		delete_user.configure(background = self.gui_background, fg=self.gui_foreground)
+		delete_user.place(width = 300, height = 15, relx = .5, rely = .95, anchor = CENTER)
+		delete_user.bind("<Button-1>", self.deleteUser)
 		i = 0
 		while i < len(self.names):
 			rown = Label(text = self.names[i], anchor="w")														
@@ -251,8 +259,8 @@ class gui(Tk):
 		name = name.strip()
 		for e in self.errors:
 			e.destroy()
-		if(name in self.names or (len(name) < 1)):
-			error = Label(text = "invalid username", anchor=CENTER)														
+		if(name in self.names or (len(name) < 1)    or   (len(self.new_password.get()) < 1)   ):
+			error = Label(text = "invalid username or password", anchor=CENTER)														
 			self.errors.append(error)
 			error.configure(background = self.gui_background, fg=self.gui_foreground)
 			error.place(width = 200, height = 15, relx = .5, rely = .05, anchor = CENTER)
@@ -273,16 +281,18 @@ class gui(Tk):
 
 		self.edit_password = Entry()
 		self.widgets.append(self.edit_password)	#add to widgets list
-		self.edit_password.place(width = 100, height = 15,relx=.5, rely=.95, anchor=CENTER)
+		self.edit_password.place(width = 100, height = 15,relx=.5, rely=.9, anchor=CENTER)
 		self.edit_password.bind('<Return>', self.editPasswords)
 
 		self.editLabel = Label(text = "EDIT:", anchor=CENTER)					
+		self.widgets.append(self.editLabel)	#add to widgets list
 		self.editLabel.configure(background = self.gui_background, fg=self.gui_foreground)
-		self.editLabel.place(width = 50, height = 15, relx = .4, rely = .95, anchor = CENTER)
+		self.editLabel.place(width = 50, height = 15, relx = .4, rely = .9, anchor = CENTER)
 
 		self.deleteLabel = Label(text = "DELETE", anchor=CENTER)					
+		self.widgets.append(self.deleteLabel)	#add to widgets list
 		self.deleteLabel.configure(background = self.gui_background, fg=self.gui_foreground)
-		self.deleteLabel.place(width = 50, height = 15, relx = .6, rely = .95, anchor = CENTER)
+		self.deleteLabel.place(width = 50, height = 15, relx = .6, rely = .9, anchor = CENTER)
 		self.deleteLabel.bind('<Button-1>', self.delPassword)
 	def editPasswords(self,event):
 		self.ps.editPassword(self.username, self.__password, self.name, self.edit_password.get())
@@ -298,6 +308,11 @@ class gui(Tk):
 		self.edit_password.destroy()
 		self.ps.deletePassword(self.username, self.__password, self.name)
 		self.show_passwords()
+
+	def deleteUser(self, event):
+		self.ps.deleteUser(self.username)
+		self.clear()
+		self.initialize()
 
 
 
