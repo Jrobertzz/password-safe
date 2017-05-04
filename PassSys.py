@@ -67,6 +67,12 @@ class PassSys:
 			os.remove(sfile)
 		except FileNotFoundError:
 			print("must delete a valid user")
+			
+		dfile = (username + '_d.txt')
+		try:
+			os.remove(dfile)
+		except FileNotFoundError:
+			print("user had no passwords stored")
 		
 	def getNames(self, username, mPassword): #takes a user and returns the name associated with the password e.g. reddit, gmail, or facebook.
 		dfile = (username + '_d.txt')
